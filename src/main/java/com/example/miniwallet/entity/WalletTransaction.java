@@ -3,10 +3,16 @@ package com.example.miniwallet.entity;
 import com.example.miniwallet.constant.TransactionStatus;
 import com.example.miniwallet.constant.TransactionType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "wallet_transaction")
+@Getter
+@Setter
 public class WalletTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
