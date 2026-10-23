@@ -123,7 +123,24 @@ public class WalletServiceImpl implements WalletService {
             BigDecimal amount = request.getAmount();
 
             if (fromWalletId.equals(toWalletId)) {
-                throw new InvalidTransactionException("Cannot transfer money to the same wallet");
+//                throw new InvalidTransactionException("Cannot transfer money to the same wallet");
+                Wallet wallet = walletRepository.findById(fromWalletId).orElseThrow(() ->
+                        new WalletNotFoundException("Wallet not found with ID : " + fromWalletId)
+                );
+                WalletTransaction failedTransaction = new WalletTransaction();
+                failedTransaction.setWallet(wallet);
+                failedTransaction.setType(TransactionType.TRANSFER_OUT);
+                failedTransaction.setAmount(request.getAmount());
+                failedTransaction.setStatus(TransactionStatus.FAILED);
+                failedTransaction.setReferenceId(UUID.randomUUID().toString());
+                WalletTransaction savedTransaction = walletTransactionRepository.save(failedTransaction);
+                return new TransferResponse(
+                        savedTransaction.getId(),
+                        fromWalletId,
+                        toWalletId,
+                        amount,
+                        TransactionStatus.FAILED.name()
+                );
             }
 
             Long firstId = Math.min(fromWalletId, toWalletId);
@@ -138,7 +155,19 @@ public class WalletServiceImpl implements WalletService {
             Wallet toWallet = toWalletId.equals(firstId) ? firstWallet : secondWallet;
 
             if (fromWallet.getBalance().compareTo(amount) < 0) {
-                throw new InsufficientBalanceException("Insufficient balance to complete the transfer");
+//                throw new InsufficientBalanceException("Insufficient balance to complete the transfer");
+                WalletTransaction failedTransaction = new WalletTransaction();
+                failedTransaction.setWallet(fromWallet);
+                failedTransaction.setType(TransactionType.TRANSFER_OUT);
+                failedTransaction.setAmount(request.getAmount());
+                failedTransaction.setStatus(TransactionStatus.FAILED);
+                failedTransaction.setReferenceId(UUID.randomUUID().toString());
+                WalletTransaction savedTransaction = walletTransactionRepository.save(failedTransaction);
+                return new TransferResponse(savedTransaction.getId(),
+                        request.getFromWalletId(),
+                        request.getToWalletId(),
+                        request.getAmount(),
+                        TransactionStatus.FAILED.name());
             }
 
             fromWallet.setBalance(fromWallet.getBalance().subtract(amount));

@@ -1,5 +1,6 @@
 package com.example.miniwallet.controller;
 
+import com.example.miniwallet.constant.TransactionStatus;
 import com.example.miniwallet.dto.*;
 import com.example.miniwallet.service.WalletService;
 import com.example.miniwallet.util.LoggerUtil;
@@ -65,6 +66,9 @@ public class WalletController {
         LoggerUtil.logEntryController(logger, API_NAME, CLASS_NAME);
         try {
             TransferResponse response = walletService.transfer(request);
+            if(TransactionStatus.FAILED.name().equals(response.getStatus())){
+                return ResponseEntity.badRequest().body(response);
+            }
             return ResponseEntity.ok(response);
         } finally {
             LoggerUtil.logExitController(logger, API_NAME, CLASS_NAME);
