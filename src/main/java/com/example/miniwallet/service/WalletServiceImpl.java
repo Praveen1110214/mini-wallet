@@ -5,6 +5,7 @@ import com.example.miniwallet.constant.TransactionType;
 import com.example.miniwallet.dto.*;
 import com.example.miniwallet.entity.Wallet;
 import com.example.miniwallet.entity.WalletTransaction;
+import com.example.miniwallet.exception.DuplicateEmailException;
 import com.example.miniwallet.exception.InsufficientBalanceException;
 import com.example.miniwallet.exception.InvalidTransactionException;
 import com.example.miniwallet.exception.WalletNotFoundException;
@@ -40,7 +41,7 @@ public class WalletServiceImpl implements WalletService {
         LoggerUtil.logEntry(logger, METHOD_NAME, CLASS_NAME);
         try {
             if (walletRepository.existsByEmail(request.getEmail())) {
-                throw new IllegalArgumentException("A wallet with this email already exists");
+                throw new DuplicateEmailException("A wallet with this email already exists");
             }
             Wallet wallet = new Wallet();
             wallet.setName(request.getName());

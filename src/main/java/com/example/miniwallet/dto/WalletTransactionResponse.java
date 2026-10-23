@@ -1,7 +1,5 @@
 package com.example.miniwallet.dto;
 
-import com.example.miniwallet.constant.TransactionStatus;
-import com.example.miniwallet.constant.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

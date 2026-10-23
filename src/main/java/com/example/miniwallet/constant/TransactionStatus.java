@@ -1,5 +1,8 @@
 package com.example.miniwallet.constant;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TransactionStatus implements EnumInterface{
 
     SUCCESS(1, "Success", "Transaction completed successfully"),
